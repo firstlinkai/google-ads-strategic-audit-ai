@@ -1,0 +1,292 @@
+{
+  "name": "5. Error handler - Google ads to slides workflow",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "0d598f66-a30d-4a41-b5e5-54f32c94e6ed",
+      "name": "Error Trigger",
+      "alwaysOutputData": false,
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "11Hl8ZaeQ-B3OhqGJgHIpJPeAhsxMX73Vw9giB0PWcuE",
+          "mode": "list",
+          "cachedResultName": "Google Ad to Slides",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11Hl8ZaeQ-B3OhqGJgHIpJPeAhsxMX73Vw9giB0PWcuE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Ads Sync",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11Hl8ZaeQ-B3OhqGJgHIpJPeAhsxMX73Vw9giB0PWcuE/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Error Log": "={{ $('Error Trigger').item.json.execution.error.message }}",
+            "Account ID": "={{ $json['account id'] }}",
+            "Presenatation Status": "Failed",
+            "Generate Pesenration": "={{ false }}"
+          },
+          "matchingColumns": [
+            "Account ID"
+          ],
+          "schema": [
+            {
+              "id": "Account ID",
+              "displayName": "Account ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Account Name",
+              "displayName": "Account Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Last Synced",
+              "displayName": "Last Synced",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Error Log",
+              "displayName": "Error Log",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Update Data",
+              "displayName": "Update Data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Update Data Status",
+              "displayName": "Update Data Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Generate Pesenration",
+              "displayName": "Generate Pesenration",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Presenatation Status",
+              "displayName": "Presenatation Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Duration",
+              "displayName": "Duration",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Summary",
+              "displayName": "Summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Link",
+              "displayName": "Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        416,
+        0
+      ],
+      "id": "1c6a7d06-0638-4923-ac79-1c4612dea99c",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ne5lFAYcDs8mggLN",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "60ea498c-5e9e-4251-9ba6-18af2693992d",
+              "name": "account id",
+              "value": "={{ ($json.error?.message || $json.execution?.error?.message)?.match(/\\d{3}-\\d{3}-\\d{4}/)?.[0] }}",
+              "type": "string"
+            },
+            {
+              "id": "6500da16-5989-4e6c-a766-fd8089bab9bf",
+              "name": "",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "884c0324-d8a9-4d28-8008-214e674b75aa",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {
+    "Error Trigger": [
+      {
+        "json": {
+          "execution": {
+            "id": "11955",
+            "url": "https://dgtlbase.app.n8n.cloud/workflow/E1U-fseSG7IkWyYMpEkvU/executions/11955",
+            "error": {
+              "level": "error",
+              "tags": {},
+              "description": "AccountID",
+              "lineNumber": 3,
+              "message": "196-528-3444 - Triggering Error Handler [line 3]",
+              "stack": "Error: AccountID:196-528-3444 - Triggering Error Handler\n    at VmCodeWrapper (evalmachine.<anonymous>:3:7)\n    at evalmachine.<anonymous>:4:2\n    at Script.runInContext (node:vm:149:12)\n    at runInContext (node:vm:301:6)\n    at result (/opt/runners/task-runner-javascript/dist/js-task-runner/js-task-runner.js:185:61)\n    at new Promise (<anonymous>)\n    at JsTaskRunner.runForAllItems (/opt/runners/task-runner-javascript/dist/js-task-runner/js-task-runner.js:178:34)\n    at JsTaskRunner.executeTask (/opt/runners/task-runner-javascript/dist/js-task-runner/js-task-runner.js:128:26)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async Object.waitingForSettings (/opt/runners/task-runner-javascript/dist/task-runner.js:256:17)"
+            },
+            "lastNodeExecuted": "Error Node",
+            "mode": "webhook",
+            "executionContext": {
+              "version": 1,
+              "establishedAt": 1770915355536,
+              "source": "webhook",
+              "triggerNode": {
+                "name": "Webhook",
+                "type": "n8n-nodes-base.webhook"
+              }
+            }
+          },
+          "workflow": {
+            "id": "E1U-fseSG7IkWyYMpEkvU",
+            "name": "3. Google Ads to Slides - Campaigns Breakdown"
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "a1bad2f2-20d6-4840-9694-e8382a03f01c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "563081422b97a9613202fc9e330444d764a4b838aee8c810ae24b64e312e87c7"
+  },
+  "id": "jJWYjxY9bwKVZ-fCqN9QL",
+  "tags": []
+}

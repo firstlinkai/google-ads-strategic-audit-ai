@@ -1,0 +1,1423 @@
+{
+  "name": "1. Google Ads to Sheets - Data Extraction",
+  "nodes": [
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "11Hl8ZaeQ-B3OhqGJgHIpJPeAhsxMX73Vw9giB0PWcuE",
+          "mode": "list",
+          "cachedResultName": "Google Ad to Slides",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11Hl8ZaeQ-B3OhqGJgHIpJPeAhsxMX73Vw9giB0PWcuE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Ads Sync",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11Hl8ZaeQ-B3OhqGJgHIpJPeAhsxMX73Vw9giB0PWcuE/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Status",
+              "lookupValue": "Active"
+            },
+            {
+              "lookupColumn": "Update Data",
+              "lookupValue": "={{true}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -400,
+        -48
+      ],
+      "id": "079ac837-e8e2-46d4-8107-b1c5b636d9d7",
+      "name": "Get Active Accounts",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ne5lFAYcDs8mggLN",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -48,
+        -48
+      ],
+      "id": "4ecd8490-0a6b-471f-ac58-ada5b2539c31",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        176,
+        -32
+      ],
+      "id": "65983b69-f3dc-427c-86b0-29b5115120da",
+      "name": "Wait",
+      "webhookId": "893866c6-542b-4e20-b35e-d55bcab40455"
+    },
+    {
+      "parameters": {
+        "managerCustomerId": " 668-083-3546",
+        "clientCustomerId": "={{ $json['Account ID'] }}",
+        "additionalOptions": {
+          "dateRange": "allTime",
+          "campaignStatus": "all"
+        },
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.googleAds",
+      "typeVersion": 1,
+      "position": [
+        768,
+        -432
+      ],
+      "id": "f2c2d790-55b9-4b28-b098-b7c7e70c7ae1",
+      "name": "Get many campaigns",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleAdsOAuth2Api": {
+          "id": "FyGlhDuXnGAjHnyG",
+          "name": "Google Ads account - aifirstlink"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "11Hl8ZaeQ-B3OhqGJgHIpJPeAhsxMX73Vw9giB0PWcuE",
+          "mode": "list",
+          "cachedResultName": "Google Ad to Slides",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11Hl8ZaeQ-B3OhqGJgHIpJPeAhsxMX73Vw9giB0PWcuE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 850477222,
+          "mode": "list",
+          "cachedResultName": "Data dump",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11Hl8ZaeQ-B3OhqGJgHIpJPeAhsxMX73Vw9giB0PWcuE/edit#gid=850477222"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Account ID": "={{ $('Wait').item.json['Account ID'] }}",
+            "Campaign Name": "={{ $json.name }}",
+            "Campaign ID": "={{ $json.id }}",
+            "Account Name": "={{ $('Get Active Accounts').item.json['Account Name'] }}",
+            "Status": "={{ $json.status }}",
+            "Conversions": "={{ $json.formatted.conversions }}",
+            "Impressions": "={{ $json.formatted.impressions }}",
+            "Cost": "={{ $json.formatted.cost }}",
+            "Clicks": "={{ $json.formatted.clicks }}",
+            "CTR": "={{ $json.formatted.ctr }}",
+            "Avg. CPC": "={{ $json.formatted.avg_cpc }}",
+            "CPA": "={{ $json.formatted.cpa }}",
+            "CPM": "={{ $json.formatted.cpm }}",
+            "Conv. Rate": "={{ $json.formatted.conv_rate }}",
+            "Opt. Score": "={{ $json.formatted.opt_score }}",
+            "Month": "={{ $json.formatted.month }}"
+          },
+          "matchingColumns": [
+            "Campaign ID"
+          ],
+          "schema": [
+            {
+              "id": "Account ID",
+              "displayName": "Account ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Account Name",
+              "displayName": "Account Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Campaign Name",
+              "displayName": "Campaign Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Campaign ID",
+              "displayName": "Campaign ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Cost",
+              "displayName": "Cost",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Impressions",
+              "displayName": "Impressions",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Clicks",
+              "displayName": "Clicks",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "CTR",
+              "displayName": "CTR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Avg. CPC",
+              "displayName": "Avg. CPC",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Conversions",
+              "displayName": "Conversions",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "CPA",
+              "displayName": "CPA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "CPM",
+              "displayName": "CPM",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Conv. Rate",
+              "displayName": "Conv. Rate",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Opt. Score",
+              "displayName": "Opt. Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Month",
+              "displayName": "Month",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1616,
+        736
+      ],
+      "id": "d2a2c883-ef73-47c9-90d2-b14403d7fbc0",
+      "name": "Append or update row in sheet",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ne5lFAYcDs8mggLN",
+          "name": "Google Sheets account 2"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Calculate the Previous Month once at the top\nconst now = new Date();\nnow.setMonth(now.getMonth() - 1); // Subtract 1 month\nconst monthNames = [\"Jan\", \"Feb\", \"Mar\", \"Apr\", \"May\", \"Jun\", \"Jul\", \"Aug\", \"Sep\", \"Oct\", \"Nov\", \"Dec\"];\nconst previousMonthStr = `${monthNames[now.getMonth()]} ${now.getFullYear()}`;\n\nfor (const item of $input.all()) {\n  const raw = item.json; \n  \n  // 2. Force conversion from Strings to Numbers\n  const costMicros = Number(raw.costMicros) || 0;\n  const conversions = Number(raw.conversions) || 0;\n  const impressions = Number(raw.impressions) || 0;\n  const interactions = Number(raw.interactions) || 0; \n  const optimizationScore = Number(raw.optimizationScore) || 0;\n\n  // 3. Standardize Cost (Micros / 1,000,000)\n  const cost = costMicros / 1000000;\n  \n  // 4. Apply your specific formulas\n  const ctr = impressions > 0 ? (interactions / impressions) : 0;\n  const cpc = interactions > 0 ? (cost / interactions) : 0;\n  const cpa = conversions > 0 ? (cost / conversions) : 0;\n  const cpm = impressions > 0 ? (cost / impressions) * 1000 : 0;\n  const convRate = interactions > 0 ? (conversions / interactions) : 0;\n\n  // 5. Create the \"formatted\" object\n  item.json.formatted = {\n    month: previousMonthStr, // This will be \"Jan 2026\" if run in Feb\n    cost: Number(cost.toFixed(2)),\n    impressions: impressions,\n    clicks: interactions,\n    ctr: Number(ctr.toFixed(4)),\n    avg_cpc: Number(cpc.toFixed(2)),\n    conversions: Number(conversions.toFixed(2)),\n    cpa: Number(cpa.toFixed(2)),\n    cpm: Number(cpm.toFixed(2)),\n    conv_rate: Number(convRate.toFixed(4)),\n    opt_score: Number(optimizationScore.toFixed(4))\n  };\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1248,
+        176
+      ],
+      "id": "82992a61-8d6c-48f5-a016-715e94936e46",
+      "name": "Math Engine"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "11Hl8ZaeQ-B3OhqGJgHIpJPeAhsxMX73Vw9giB0PWcuE",
+          "mode": "list",
+          "cachedResultName": "Google Ad to Slides",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11Hl8ZaeQ-B3OhqGJgHIpJPeAhsxMX73Vw9giB0PWcuE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Ads Sync",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11Hl8ZaeQ-B3OhqGJgHIpJPeAhsxMX73Vw9giB0PWcuE/edit#gid=0"
+        },
+        "event": "rowUpdate",
+        "options": {
+          "columnsToWatch": [
+            "Update Data"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1088,
+        -272
+      ],
+      "id": "86c0ba75-f1d3-47de-94f3-0304923f5c70",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "5Eo189tOLqHSTMjl",
+          "name": "Google Sheets Trigger account 2"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1056,
+        144
+      ],
+      "id": "1d030fb5-9e40-4f68-8328-088f31bc17a4",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "11Hl8ZaeQ-B3OhqGJgHIpJPeAhsxMX73Vw9giB0PWcuE",
+          "mode": "list",
+          "cachedResultName": "Google Ad to Slides",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11Hl8ZaeQ-B3OhqGJgHIpJPeAhsxMX73Vw9giB0PWcuE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Ads Sync",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11Hl8ZaeQ-B3OhqGJgHIpJPeAhsxMX73Vw9giB0PWcuE/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Last Synced": "={{ $now.toFormat('dd/MM/yyyy') }}",
+            "Account ID": "={{ $('Get Active Accounts').item.json['Account ID'] }}",
+            "Update Data": "={{false}}",
+            "Update Data Status": "Complete"
+          },
+          "matchingColumns": [
+            "Account ID"
+          ],
+          "schema": [
+            {
+              "id": "Account ID",
+              "displayName": "Account ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Account Name",
+              "displayName": "Account Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Last Synced",
+              "displayName": "Last Synced",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Error Log",
+              "displayName": "Error Log",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Update Data",
+              "displayName": "Update Data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Update Data Status",
+              "displayName": "Update Data Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Generate Pesenration",
+              "displayName": "Generate Pesenration",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Presenatation Status",
+              "displayName": "Presenatation Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Duration",
+              "displayName": "Duration",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Summary",
+              "displayName": "Summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        176,
+        -304
+      ],
+      "id": "32116f18-897c-4b2f-a891-6968250c285d",
+      "name": "Update Status - Ad Sync",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ne5lFAYcDs8mggLN",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Get Active Accounts').item.json.Duration }}",
+                    "rightValue": "ALL TIME",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "726af7a0-61b2-4492-870d-e23743bf3612"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "All Time"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "5ad74dd5-e24d-4273-af50-a326158fd74c",
+                    "leftValue": "={{ $('Get Active Accounts').item.json.Duration }}",
+                    "rightValue": "TODAY",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Today"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "94b94814-0b59-4766-8b37-026c7e07b45d",
+                    "leftValue": "={{ $('Get Active Accounts').item.json.Duration }}",
+                    "rightValue": "THIS_MONTH",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "This Month"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "10b7dff9-472f-4439-8575-4e30b7e6f6cd",
+                    "leftValue": "={{ $('Get Active Accounts').item.json.Duration }}",
+                    "rightValue": "LAST_MONTH",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Last Month"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "b831bb04-1678-4ed9-9a5a-155643ca7558",
+                    "leftValue": "={{ $('Get Active Accounts').item.json.Duration }}",
+                    "rightValue": "LAST_7_DAYS",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Last 7 Days"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "6e6e8613-b1b2-4d34-94d7-024a4552816a",
+                    "leftValue": "={{ $('Get Active Accounts').item.json.Duration }}",
+                    "rightValue": "LAST_14_DAYS",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Last 14 Days"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "76ea3ae4-8a17-4a8e-8e6f-dca9a6dfa8ae",
+                    "leftValue": "={{ $('Get Active Accounts').item.json.Duration }}",
+                    "rightValue": "LAST_30_DAYS",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Last 30 Days"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        368,
+        -112
+      ],
+      "id": "c786f4f9-4e0b-4e5f-b416-424f88569cc2",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "managerCustomerId": " 668-083-3546",
+        "clientCustomerId": "={{ $json['Account ID'] }}",
+        "additionalOptions": {
+          "dateRange": "TODAY",
+          "campaignStatus": "all"
+        },
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.googleAds",
+      "typeVersion": 1,
+      "position": [
+        768,
+        -256
+      ],
+      "id": "2c252819-7f8a-4be6-84a1-fc514bd3cd8f",
+      "name": "Get many campaigns1",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleAdsOAuth2Api": {
+          "id": "FyGlhDuXnGAjHnyG",
+          "name": "Google Ads account - aifirstlink"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "managerCustomerId": " 668-083-3546",
+        "clientCustomerId": "={{ $json['Account ID'] }}",
+        "additionalOptions": {
+          "dateRange": "THIS_MONTH",
+          "campaignStatus": "all"
+        },
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.googleAds",
+      "typeVersion": 1,
+      "position": [
+        768,
+        -48
+      ],
+      "id": "6db4d46c-2c6f-4f78-9e9a-b25afee14577",
+      "name": "Get many campaigns2",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleAdsOAuth2Api": {
+          "id": "FyGlhDuXnGAjHnyG",
+          "name": "Google Ads account - aifirstlink"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "managerCustomerId": " 668-083-3546",
+        "clientCustomerId": "={{ $json['Account ID'] }}",
+        "additionalOptions": {
+          "dateRange": "LAST_7_DAYS",
+          "campaignStatus": "all"
+        },
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.googleAds",
+      "typeVersion": 1,
+      "position": [
+        768,
+        352
+      ],
+      "id": "3c9edb65-41b2-4244-a0ee-e3dbbf1717f2",
+      "name": "Get many campaigns4",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleAdsOAuth2Api": {
+          "id": "FyGlhDuXnGAjHnyG",
+          "name": "Google Ads account - aifirstlink"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "managerCustomerId": " 668-083-3546",
+        "clientCustomerId": "={{ $json['Account ID'] }}",
+        "additionalOptions": {
+          "dateRange": "LAST_14_DAYS",
+          "campaignStatus": "all"
+        },
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.googleAds",
+      "typeVersion": 1,
+      "position": [
+        768,
+        544
+      ],
+      "id": "4410ae8c-6af9-4598-8cda-d7b3b22481f9",
+      "name": "Get many campaigns5",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleAdsOAuth2Api": {
+          "id": "FyGlhDuXnGAjHnyG",
+          "name": "Google Ads account - aifirstlink"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "managerCustomerId": " 668-083-3546",
+        "clientCustomerId": "={{ $json['Account ID'] }}",
+        "additionalOptions": {
+          "dateRange": "LAST_30_DAYS",
+          "campaignStatus": "all"
+        },
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.googleAds",
+      "typeVersion": 1,
+      "position": [
+        768,
+        736
+      ],
+      "id": "84da585e-87d3-4f54-ada7-e48c0d0b8383",
+      "name": "Get many campaigns6",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleAdsOAuth2Api": {
+          "id": "FyGlhDuXnGAjHnyG",
+          "name": "Google Ads account - aifirstlink"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "11Hl8ZaeQ-B3OhqGJgHIpJPeAhsxMX73Vw9giB0PWcuE",
+          "mode": "list",
+          "cachedResultName": "Google Ad to Slides",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11Hl8ZaeQ-B3OhqGJgHIpJPeAhsxMX73Vw9giB0PWcuE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Ads Sync",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11Hl8ZaeQ-B3OhqGJgHIpJPeAhsxMX73Vw9giB0PWcuE/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Last Synced": "={{ $now.toFormat('dd/MM/yyyy') }}",
+            "Account ID": "={{ $('Get Active Accounts').item.json['Account ID'] }}",
+            "Update Data": "={{true}}",
+            "Update Data Status": "Processing"
+          },
+          "matchingColumns": [
+            "Account ID"
+          ],
+          "schema": [
+            {
+              "id": "Account ID",
+              "displayName": "Account ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Account Name",
+              "displayName": "Account Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Last Synced",
+              "displayName": "Last Synced",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Error Log",
+              "displayName": "Error Log",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Update Data",
+              "displayName": "Update Data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Update Data Status",
+              "displayName": "Update Data Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Generate Pesenration",
+              "displayName": "Generate Pesenration",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Presenatation Status",
+              "displayName": "Presenatation Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Duration",
+              "displayName": "Duration",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Summary",
+              "displayName": "Summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Link",
+              "displayName": "Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Currency",
+              "displayName": "Currency",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -224,
+        -48
+      ],
+      "id": "67842471-01ff-4740-9cf8-15baacfdd2c4",
+      "name": "Update Status - Ad Sync1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ne5lFAYcDs8mggLN",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "7ff7944b-a643-4138-8adc-a13007090351",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -752,
+        -48
+      ],
+      "id": "2c194b54-e994-4b2b-8074-296fa7c4c72f",
+      "name": "Webhook",
+      "webhookId": "7ff7944b-a643-4138-8adc-a13007090351",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "managerCustomerId": "668-083-3546",
+        "clientCustomerId": "={{ $json['Account ID'] }}",
+        "additionalOptions": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.googleAds",
+      "typeVersion": 1,
+      "position": [
+        768,
+        160
+      ],
+      "id": "b1885ed9-cf92-4cbb-8aef-4df503c5283f",
+      "name": "Get many campaigns3",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleAdsOAuth2Api": {
+          "id": "FyGlhDuXnGAjHnyG",
+          "name": "Google Ads account - aifirstlink"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://googleads.googleapis.com/v23/customers/1934835491/googleAds:search",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "developer-token",
+              "value": "K3HAuOkB9Ut1lSPcgCJJQQ"
+            },
+            {
+              "name": "login-customer-id",
+              "value": "6680833546"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n\"query\": \"SELECT campaign.name, metrics.conversions_value, metrics.conversions_value_to_cost_ratio, metrics.cost_per_conversion, metrics.conversions_from_interactions_rate FROM campaign WHERE segments.date DURING LAST_MONTH\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -368,
+        240
+      ],
+      "id": "e7b27eaf-ea57-47cf-82c9-faa1f30f228b",
+      "name": "HTTP Request",
+      "credentials": {
+        "googleAdsOAuth2Api": {
+          "id": "FyGlhDuXnGAjHnyG",
+          "name": "Google Ads account - aifirstlink"
+        },
+        "oAuth2Api": {
+          "id": "hUoK4nVmL27ntd5o",
+          "name": "Google OAuth2 API - Generic"
+        }
+      },
+      "disabled": true
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Get Active Accounts": {
+      "main": [
+        [
+          {
+            "node": "Update Status - Ad Sync1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Update Status - Ad Sync",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many campaigns": {
+      "main": [
+        [
+          {
+            "node": "Math Engine",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Math Engine": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets Trigger": {
+      "main": [
+        []
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get Active Accounts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Status - Ad Sync": {
+      "main": [
+        []
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Get many campaigns",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get many campaigns1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get many campaigns2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get many campaigns3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get many campaigns4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get many campaigns5",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get many campaigns6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many campaigns1": {
+      "main": [
+        [
+          {
+            "node": "Math Engine",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many campaigns2": {
+      "main": [
+        [
+          {
+            "node": "Math Engine",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many campaigns4": {
+      "main": [
+        [
+          {
+            "node": "Math Engine",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many campaigns5": {
+      "main": [
+        [
+          {
+            "node": "Math Engine",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many campaigns6": {
+      "main": [
+        [
+          {
+            "node": "Math Engine",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Status - Ad Sync1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        []
+      ]
+    },
+    "Get many campaigns3": {
+      "main": [
+        [
+          {
+            "node": "Math Engine",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Math Engine",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "4a60ddbe-3850-4d9c-91e2-fc78256005a4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "563081422b97a9613202fc9e330444d764a4b838aee8c810ae24b64e312e87c7"
+  },
+  "id": "3sXsvl2bvZfxcWL2",
+  "tags": []
+}
